@@ -7,7 +7,7 @@
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.useMsvc": false,
   "C_Cpp_Runner.warnings": [
-    "-Wall",
+    "-Wal",
     "-Wextra",
     "-Wpedantic",
     "-Wshadow",
