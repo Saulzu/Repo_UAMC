@@ -176,10 +176,16 @@ void jugar(Tablero* t1, Tablero* t2, Jugador* j1, Jugador* j2) {
          resultado = marcarTiro(enemigo, fila, col);
 
          if (resultado == -1) {
-            printf("\e[38;5;46mYa disparaste ahí. Intenta de nuevo (ENTER)...\e[0m\n");
+            char confirmacion;
+            printf("\e[38;5;46mYa disparaste ahí.¿Deseas reintentar? (s/n)\e[0m\n");
             cursorVisible();
             while (getchar() != '\n');
-            getchar();
+            scanf(" %c", &confirmacion); 
+
+            if (confirmacion == 'n' || confirmacion == 'N') {
+               printf("Saliendo del juego...\n");
+               return; 
+            }
             cursorInvisible();
          }
       } while (resultado == -1);
@@ -195,11 +201,15 @@ void jugar(Tablero* t1, Tablero* t2, Jugador* j1, Jugador* j2) {
       }
 
       desplegarTableros(*propio, *enemigo, atacante, defensor);
-        
-      printf("\nPresiona ENTER para continuar...");
+      char confirmacion;
+      printf("\n¿Siguiente turno? (s/n)");
       cursorVisible();
       while (getchar() != '\n'); 
-      getchar();
+      scanf(" %c", &confirmacion); 
+      if (confirmacion == 'n' || confirmacion == 'N') {
+         printf("Saliendo del juego...\n");
+         return; 
+      }
       cursorInvisible();
 
       if (j1->nBarcosVivos == 0 || j2->nBarcosVivos == 0)
