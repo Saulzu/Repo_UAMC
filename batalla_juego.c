@@ -26,16 +26,13 @@ void leerTiradaValida(int maxR, int maxC, int* outRen, int* outCol) {
 
 int marcarTiro(Tablero* objetivo, int fila, int col) {
     int actual = objetivo->array[fila][col];
-
-    if (actual == BARCO_HUNDIDO || actual == TIRO_CAIDO) {
+    if (actual == BARCO_HUNDIDO || actual == TIRO_CAIDO)
         return -1;
-    }
 
     if (actual == BARCO_OCULTO) {
         objetivo->array[fila][col] = BARCO_HUNDIDO;
         return 1;
     }
-
     objetivo->array[fila][col] = TIRO_CAIDO;
     return 0;
 }
