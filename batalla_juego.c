@@ -5,29 +5,23 @@
 int leerTiradaValida(int maxR, int maxC, int* outRen, int* outCol) {
     int fila, col;
     int leidoFila, leidoCol;
-
     do {
         printf("Ingresa la fila (1-%d): ", maxR);
         leidoFila = scanf("%d", &fila);
-
         if (leidoFila != 1 || fila < 1 || fila > maxR) {
             printf("Fila inválida. Intenta de nuevo.\n");
-            leidoFila = 0; // Forzamos repetir si el rango está mal
+            leidoFila = 0; 
         }
-
         printf("Ingresa la columna (1-%d): ", maxC);
         leidoCol = scanf("%d", &col);
-
         if (leidoCol != 1 || col < 1 || col > maxC) {
             printf("Columna inválida. Intenta de nuevo.\n");
             leidoCol = 0;
         }
-
     } while (leidoFila != 1 || leidoCol != 1);
-
+    
     *outRen = fila - 1;
     *outCol = col - 1;
-
     return 1;
 }
 
