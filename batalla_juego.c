@@ -159,7 +159,6 @@ void jugar(Tablero* t1, Tablero* t2, Jugador* j1, Jugador* j2) {
          limpiaConsola();
          turnoBatalla(atacante, defensor, 2, 10);
          desplegarTableros(*propio, *enemigo, atacante, defensor);
-
          printf("\n");
          leerTiradaValida(propio->numRens, propio->numCols, &fila, &col);
             
