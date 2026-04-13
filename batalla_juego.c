@@ -2,7 +2,7 @@
 #include "batalla_juego.h"
 #include "biblio_printconsola.h"
 
-int leerTiradaValida(int maxR, int maxC, int* outRen, int* outCol) {
+void leerTiradaValida(int maxR, int maxC, int* outRen, int* outCol) {
     int fila, col;
     int leidoFila, leidoCol;
     do {
@@ -22,7 +22,6 @@ int leerTiradaValida(int maxR, int maxC, int* outRen, int* outCol) {
     
     *outRen = fila - 1;
     *outCol = col - 1;
-    return 1;
 }
 
 int marcarTiro(Tablero* objetivo, int fila, int col) {
