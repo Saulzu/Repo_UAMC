@@ -78,18 +78,18 @@ void sembrarBarcos(Tablero* tab) {
 }
 void leerInfoTableros(Tablero* tab1, Tablero* tab2) {
     do {
-        printf("\nIngresa el num. de renglones (5-50): ");
+        printf("\nIngresa el num. de renglones (5-30): ");
         scanf("%d", &(tab1->numRens));
-        if (tab1->numRens < 5 || tab1->numRens > 50) 
+        if (tab1->numRens < 5 || tab1->numRens > 30) 
             printf("Dato invalido, intenta de nuevo.\n");
-    } while (tab1->numRens < 5 || tab1->numRens > 50);
+    } while (tab1->numRens < 5 || tab1->numRens > 30);
    
     do {
-        printf("Ingresa el num. de columnas (5-50): ");
+        printf("Ingresa el num. de columnas (5-30): ");
         scanf("%d", &(tab1->numCols));
-        if (tab1->numCols < 5 || tab1->numCols > 50) 
+        if (tab1->numCols < 5 || tab1->numCols > 30) 
             printf("Dato invalido, intenta de nuevo.\n");
-    } while (tab1->numCols < 5 || tab1->numCols > 50);
+    } while (tab1->numCols < 5 || tab1->numCols > 30);
 
     int maxBarcos = tab1->numRens * tab1->numCols;
     printf("Cuantos barcos (1-%d): ", maxBarcos);
