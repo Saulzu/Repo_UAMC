@@ -3,6 +3,27 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Estudiante",
+      "request": "launch",
+      "mainClass": "Estudiante",
+      "projectName": "Repo_C_a6265338"
+    },
+    {
+      "type": "java",
+      "name": "Area",
+      "request": "launch",
+      "mainClass": "Area",
+      "projectName": "Repo_C_a6265338"
+    },
+    {
+      "type": "java",
+      "name": "Angulos",
+      "request": "launch",
+      "mainClass": "Angulos",
+      "projectName": "Repo_C_a6265338"
+    },
+    {
+      "type": "java",
       "name": "Avion",
       "request": "launch",
       "mainClass": "Avion",
