@@ -10,7 +10,7 @@ entity Mux_2a1 is
     );
 end Mux_2a1;
 
-architecture Ar_Mux_2a1 of Mux_2a1 is
+architecture Arq_Mux_2a1 of Mux_2a1 is
 begin
     Y <= I0 when S = '0' else I1;
-end Ar_Mux_2a1;
+end Arq_Mux_2a1;

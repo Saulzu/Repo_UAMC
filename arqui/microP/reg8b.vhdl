@@ -1,17 +1,16 @@
--- REGISTRO DE 8 BITS
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity Reg8b is
     Port (
         CLK : in  STD_LOGIC;
-        W : in  STD_LOGIC; 
-        D : in  STD_LOGIC_VECTOR(7 downto 0); 
-        Q : out STD_LOGIC_VECTOR(7 downto 0) 
+        W : in  STD_LOGIC;
+        D : in  STD_LOGIC_VECTOR(7 downto 0);
+        Q : out STD_LOGIC_VECTOR(7 downto 0)
     );
 end Reg8b;
 
-architecture Ar_Reg8b of Reg8b is
+architecture Arq_Reg8b of Reg8b is
 begin
     process(CLK)
     begin
@@ -21,4 +20,4 @@ begin
             end if;
         end if;
     end process;
-end Ar_Reg8b;
+end Arq_Reg8b;

@@ -1,0 +1,79 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Unidad_Aritmetica is
+    Port (
+        A  : in  STD_LOGIC_VECTOR(7 downto 0);
+        B  : in  STD_LOGIC_VECTOR(7 downto 0);
+        S  : in  STD_LOGIC_VECTOR(2 downto 0);
+        Ci : in  STD_LOGIC;
+        R  : out STD_LOGIC_VECTOR(7 downto 0);
+        Co : out STD_LOGIC;
+        Vo : out STD_LOGIC
+    );
+end Unidad_Aritmetica;
+
+architecture Arq_Unidad_Aritmetica of Unidad_Aritmetica is
+
+    component Mux8a1 is
+        Port(
+            I0,I1,I2,I3,I4,I5,I6,I7 : in STD_LOGIC_VECTOR(7 downto 0);
+            S : in STD_LOGIC_VECTOR(2 downto 0);
+            Y : out STD_LOGIC_VECTOR(7 downto 0)
+        );
+    end component;
+
+    component sumador_completo is
+        Port (
+            A    : in  STD_LOGIC;
+            B    : in  STD_LOGIC;
+            Cin  : in  STD_LOGIC;
+            S    : out STD_LOGIC;
+            Cout : out STD_LOGIC
+        );
+    end component;
+
+    signal opA : STD_LOGIC_VECTOR(7 downto 0);
+    signal opB : STD_LOGIC_VECTOR(7 downto 0);
+    
+    signal cero        : STD_LOGIC_VECTOR(7 downto 0) := "00000000";
+    signal uno         : STD_LOGIC_VECTOR(7 downto 0) := "00000001";
+    signal menos_uno   : STD_LOGIC_VECTOR(7 downto 0) := "11111111";
+    signal B_invertida : STD_LOGIC_VECTOR(7 downto 0);
+
+    signal c_int : STD_LOGIC_VECTOR(8 downto 0);
+
+begin
+
+    B_invertida <= not B;
+
+    c_int(0) <= Ci;
+
+    MUX_OP_A : Mux8a1
+        port map (
+            I0 => A, I1 => A, I2 => A, I3 => cero,
+            I4 => A, I5 => cero, I6 => A, I7 => cero,
+            S  => S, Y  => opA
+        );
+
+    MUX_OP_B : Mux8a1
+        port map (
+            I0 => B, I1 => B_invertida, I2 => cero, I3 => B,
+            I4 => uno, I5 => B, I6 => menos_uno, I7 => B,
+            S  => S, Y  => opB
+        );
+
+    SUM0 : sumador_completo port map (A => opA(0), B => opB(0), Cin => c_int(0), S => R(0), Cout => c_int(1));
+    SUM1 : sumador_completo port map (A => opA(1), B => opB(1), Cin => c_int(1), S => R(1), Cout => c_int(2));
+    SUM2 : sumador_completo port map (A => opA(2), B => opB(2), Cin => c_int(2), S => R(2), Cout => c_int(3));
+    SUM3 : sumador_completo port map (A => opA(3), B => opB(3), Cin => c_int(3), S => R(3), Cout => c_int(4));
+    SUM4 : sumador_completo port map (A => opA(4), B => opB(4), Cin => c_int(4), S => R(4), Cout => c_int(5));
+    SUM5 : sumador_completo port map (A => opA(5), B => opB(5), Cin => c_int(5), S => R(5), Cout => c_int(6));
+    SUM6 : sumador_completo port map (A => opA(6), B => opB(6), Cin => c_int(6), S => R(6), Cout => c_int(7));
+    SUM7 : sumador_completo port map (A => opA(7), B => opB(7), Cin => c_int(7), S => R(7), Cout => c_int(8));
+
+    Co <= c_int(8);
+
+    Vo <= c_int(7) xor c_int(8);
+
+end Arq_Unidad_Aritmetica;
