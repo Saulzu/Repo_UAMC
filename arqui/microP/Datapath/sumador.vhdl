@@ -3,11 +3,11 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity sumador_completo is
     Port (
-        A    : in  STD_LOGIC;
-        B    : in  STD_LOGIC;
-        Cin  : in  STD_LOGIC;
-        S    : out STD_LOGIC;
-        Cout : out STD_LOGIC
+        A    : in  STD_LOGIC;   -- Entrada A
+        B    : in  STD_LOGIC;   -- Entrada B
+        Cin  : in  STD_LOGIC;   -- Acarreo de entrada
+        S    : out STD_LOGIC;   -- Suma (resultado bit)
+        Cout : out STD_LOGIC    -- Acarreo de salida
     );
 end sumador_completo;
 

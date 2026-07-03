@@ -1,7 +1,7 @@
 v 4
-file . "comp.vhd" "5838409b52a2cd73d39524bd6d2aba1d9c484514" "20260519165256.838":
+file . "comp.vhd" "1b6a67318e54701dfa4180a60311bb465dc9590e" "20260702180025.215":
   entity comp at 1( 0) + 0 on 13;
-  architecture behavioral of comp at 8( 119) + 0 on 14;
-file . "eje.vhdl" "919e83b885bf18041d658c5e7b2d1e0b2dfcf93b" "20260519165256.838":
-  entity mi_componente at 2( 37) + 0 on 11;
-  architecture behavioral of mi_componente at 13( 331) + 0 on 12;
+  architecture behavioral of comp at 7( 70) + 0 on 14;
+file . "eje.vhdl" "032b84e8508fd7ff9ad2cda3934cbfe83b09f990" "20260702180025.214":
+  entity mi_componente at 1( 0) + 0 on 11;
+  architecture behavioral of mi_componente at 10( 179) + 0 on 12;

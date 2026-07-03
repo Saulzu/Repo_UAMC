@@ -3,9 +3,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity mux_4a1 is
     Port (
-        I   : in  STD_LOGIC_VECTOR (3 downto 0);
-        S   : in  STD_LOGIC_VECTOR (1 downto 0);
-        Y   : out STD_LOGIC
+        I   : in  STD_LOGIC_VECTOR (3 downto 0);  -- Entradas (4 bits)
+        S   : in  STD_LOGIC_VECTOR (1 downto 0);  -- Selector (2 bits)
+        Y   : out STD_LOGIC                       -- Salida (1 bit)
     );
 end mux_4a1;
 

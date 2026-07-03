@@ -3,13 +3,13 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Unidad_Aritmetica is
     Port (
-        A  : in  STD_LOGIC_VECTOR(7 downto 0);
-        B  : in  STD_LOGIC_VECTOR(7 downto 0);
-        S  : in  STD_LOGIC_VECTOR(2 downto 0);
-        Ci : in  STD_LOGIC;
-        R  : out STD_LOGIC_VECTOR(7 downto 0);
-        Co : out STD_LOGIC;
-        Vo : out STD_LOGIC
+        A  : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando A (8 bits)
+        B  : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando B (8 bits)
+        S  : in  STD_LOGIC_VECTOR(2 downto 0);  -- Selector de operación (3 bits)
+        Ci : in  STD_LOGIC;                     -- Acarreo de entrada
+        R  : out STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de la operación aritmética (8 bits)
+        Co : out STD_LOGIC;                     -- Acarreo de salida (Carry out)
+        Vo : out STD_LOGIC                      -- Overflow
     );
 end Unidad_Aritmetica;
 
@@ -33,11 +33,10 @@ architecture Arq_Unidad_Aritmetica of Unidad_Aritmetica is
         );
     end component;
 
-    signal opA : STD_LOGIC_VECTOR(7 downto 0);
-    signal opB : STD_LOGIC_VECTOR(7 downto 0);
-    
-    signal cero        : STD_LOGIC_VECTOR(7 downto 0) := "00000000";
-    signal uno         : STD_LOGIC_VECTOR(7 downto 0) := "00000001";
+    signal opA : STD_LOGIC_VECTOR(7 downto 0);      -- Operando A para la UA
+    signal opB : STD_LOGIC_VECTOR(7 downto 0);      -- Operando B para la UA
+    signal cero        : STD_LOGIC_VECTOR(7 downto 0) := "00000000";  -- Constante cero
+    signal uno         : STD_LOGIC_VECTOR(7 downto 0) := "00000001";  -- Constante uno
     signal menos_uno   : STD_LOGIC_VECTOR(7 downto 0) := "11111111";
     signal B_invertida : STD_LOGIC_VECTOR(7 downto 0);
 

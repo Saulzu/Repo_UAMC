@@ -3,10 +3,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Ir is
     Port (
-        CLK : in  STD_LOGIC;
-        W   : in  STD_LOGIC;                     -- Entrada W (salida de la compuerta AND externa)
-        D   : in  STD_LOGIC_VECTOR(25 downto 0); -- Bus de entrada (Datos de Memoria)
-        Q   : out STD_LOGIC_VECTOR(25 downto 0)  -- Bus de salida (Instrucción actual)
+        CLK : in  STD_LOGIC;                       -- Señal de reloj (flanco de subida)
+        W   : in  STD_LOGIC;                       -- Habilitación de escritura (carga nueva instrucción si W='1')
+        D   : in  STD_LOGIC_VECTOR(25 downto 0);  -- Bus de entrada (datos de memoria)
+        Q   : out STD_LOGIC_VECTOR(25 downto 0)   -- Bus de salida (instrucción almacenada)
     );
 end Ir;
 
@@ -21,26 +21,17 @@ architecture Arq_Ir of Ir is
         );
     end component;
 
-    -- Señales internas para contener la salida estable actual de los FFs
-    signal q_reg : STD_LOGIC_VECTOR(25 downto 0);
-    
-    -- Señales de entrada final para los FFs tras la decisión del multiplexor
-    signal d_reg : STD_LOGIC_VECTOR(25 downto 0);
-
-    -- Señal de control invertida para la realimentación
-    signal W_n   : STD_LOGIC;
+    signal q_reg : STD_LOGIC_VECTOR(25 downto 0);  -- Estado actual del registro (salida de los flip-flops)
+    signal d_reg : STD_LOGIC_VECTOR(25 downto 0);  -- Entrada a los flip-flops (resultado del multiplexor)
+    signal W_n   : STD_LOGIC;                       -- Inversa de W para la realimentación
 
 begin
 
     W_n <= not W;
-    Q   <= q_reg; -- Conexión directa del estado actual hacia el puerto de salida
+    Q   <= q_reg;
 
-    -- Multiplexor interno (26 BITS)
-    -- Si W = '1' -> Se selecciona el bus de entrada D (Carga la nueva instrucción)
-    -- Si W = '0' -> Se selecciona la propia salida q_reg (Retiene la instrucción actual)
     d_reg <= (D and (25 downto 0 => W)) or (q_reg and (25 downto 0 => W_n));
 
-    -- Carry estructural de los 26 FFD 
     FF_IR0  : FlipFlopD port map (CLK => CLK, D => d_reg(0),  Q => q_reg(0));
     FF_IR1  : FlipFlopD port map (CLK => CLK, D => d_reg(1),  Q => q_reg(1));
     FF_IR2  : FlipFlopD port map (CLK => CLK, D => d_reg(2),  Q => q_reg(2));

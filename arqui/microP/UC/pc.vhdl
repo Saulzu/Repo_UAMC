@@ -3,19 +3,16 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity PC is
     Port (
-        CLK : in  STD_LOGIC;
-        W   : in  STD_LOGIC;                     -- Selector de Carga (S del Mux)
-        C   : in  STD_LOGIC_VECTOR(15 downto 0); -- Entrada para carga paralela (I1)
-        Q   : out STD_LOGIC_VECTOR(15 downto 0)  -- Salida actual del PC
+        CLK : in  STD_LOGIC;                       -- Señal de reloj
+        W   : in  STD_LOGIC;                       -- Control de carga: '0'=incrementar, '1'=cargar desde C
+        C   : in  STD_LOGIC_VECTOR(15 downto 0);  -- Entrada de carga paralela (dirección de salto)
+        Q   : out STD_LOGIC_VECTOR(15 downto 0)   -- Salida del contador de programa actual
     );
 end PC;
 
 architecture Arq_PC of PC is
 
-    -- ========================================================
-    -- DECLARACIÓN DE COMPONENTES
-    -- ========================================================
-    -- Tu componente Multiplexor 2 a 1
+    
     component Mux_2a1_n is
         Port (
             I0 : in  STD_LOGIC;
@@ -25,7 +22,6 @@ architecture Arq_PC of PC is
         );
     end component;
 
-    -- Tu componente Flip-Flop D
     component FlipFlopD is
         Port (
             CLK : in  STD_LOGIC;
@@ -34,21 +30,16 @@ architecture Arq_PC of PC is
         );
     end component;
 
-    -- ========================================================
-    -- CABLES INTERNOS
-    -- ========================================================
-    signal q_reg : STD_LOGIC_VECTOR(15 downto 0);
-    signal d_reg : STD_LOGIC_VECTOR(15 downto 0);
-    signal inc   : STD_LOGIC_VECTOR(15 downto 0);
-    signal carry : STD_LOGIC_VECTOR(15 downto 0);
+    
+    signal q_reg : STD_LOGIC_VECTOR(15 downto 0);  -- Estado actual del contador (salida de flip-flops)
+    signal d_reg : STD_LOGIC_VECTOR(15 downto 0);  -- Entrada a los flip-flops (resultado del multiplexor)
+    signal inc   : STD_LOGIC_VECTOR(15 downto 0);  -- Salida del incrementador (+1)
+    signal carry : STD_LOGIC_VECTOR(15 downto 0);  -- Cadena de acarreos del incrementador
 
 begin
 
-    Q <= q_reg; -- Salida física conectada al estado interno
+    Q <= q_reg;
 
-    -- ========================================================
-    -- 1. LÓGICA DE INCREMENTO (ANDs y XORs en cascada)
-    -- ========================================================
     inc(0)   <= q_reg(0) xor '1';
     carry(0) <= q_reg(0);
 
@@ -95,11 +86,6 @@ begin
     carry(14)<= carry(13) and q_reg(14);
 
     inc(15)  <= q_reg(15) xor carry(14);
-
-    -- ========================================================
-    -- 2. INSTANCIACIÓN DE MUXES Y FLIP-FLOPS (BIT A BIT)
-    -- ========================================================
-    -- Si W = '0' pasa inc (I0). Si W = '1' pasa carga paralela C (I1).
     
     MUX0 : Mux_2a1_n port map (I0 => inc(0),  I1 => C(0),  S => W, Y => d_reg(0));
     FF0  : FlipFlopD port map (CLK => CLK, D => d_reg(0),  Q => q_reg(0));

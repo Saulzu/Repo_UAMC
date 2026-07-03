@@ -3,15 +3,15 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Mux8a1 is
     Port(
-        I0,I1,I2,I3,I4,I5,I6,I7 : in STD_LOGIC_VECTOR(7 downto 0);
-        S : in STD_LOGIC_VECTOR(2 downto 0);
-        Y : out STD_LOGIC_VECTOR(7 downto 0)
+        I0,I1,I2,I3,I4,I5,I6,I7 : in STD_LOGIC_VECTOR(7 downto 0);  -- 8 entradas (8 bits cada una)
+        S : in STD_LOGIC_VECTOR(2 downto 0);                        -- Selector (3 bits)
+        Y : out STD_LOGIC_VECTOR(7 downto 0)                        -- Salida (8 bits)
     );
 end Mux8a1;
 
 architecture Arq_Mux8a1 of Mux8a1 is
 
-signal D0,D1,D2,D3,D4,D5,D6,D7 : STD_LOGIC;
+signal D0,D1,D2,D3,D4,D5,D6,D7 : STD_LOGIC;  -- Líneas de descodificación para cada entrada del multiplexor
 
 begin
 

@@ -3,12 +3,12 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Unidad_Logica is
     Port (
-        A : in  STD_LOGIC_VECTOR(7 downto 0);
-        B : in  STD_LOGIC_VECTOR(7 downto 0);
-        S : in  STD_LOGIC_VECTOR(2 downto 0);
-        R : out STD_LOGIC_VECTOR(7 downto 0);
-        S_flag : out STD_LOGIC;
-        Z : out STD_LOGIC
+        A : in  STD_LOGIC_VECTOR(7 downto 0);      -- Operando A (8 bits)
+        B : in  STD_LOGIC_VECTOR(7 downto 0);      -- Operando B (8 bits)
+        S : in  STD_LOGIC_VECTOR(2 downto 0);      -- Selector de operación (3 bits)
+        R : out STD_LOGIC_VECTOR(7 downto 0);      -- Resultado de la operación lógica (8 bits)
+        S_flag : out STD_LOGIC;                    -- Bandera de signo (bit 7 del resultado)
+        Z : out STD_LOGIC                          -- Bandera de cero
     );
 end Unidad_Logica;
 
@@ -22,15 +22,14 @@ architecture Arq_Unidad_Logica of Unidad_Logica is
         );
     end component;
 
-    signal res_and  : STD_LOGIC_VECTOR(7 downto 0);
-    signal res_or   : STD_LOGIC_VECTOR(7 downto 0);
-    signal res_xor  : STD_LOGIC_VECTOR(7 downto 0);
-    signal res_nor  : STD_LOGIC_VECTOR(7 downto 0);
-    signal res_nand : STD_LOGIC_VECTOR(7 downto 0);
-    signal res_notA : STD_LOGIC_VECTOR(7 downto 0);
-    signal res_notB : STD_LOGIC_VECTOR(7 downto 0);
-
-    signal internal_R : STD_LOGIC_VECTOR(7 downto 0);
+    signal res_and  : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A AND B
+    signal res_or   : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A OR B
+    signal res_xor  : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A XOR B
+    signal res_nor  : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A NOR B
+    signal res_nand : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A NAND B
+    signal res_notA : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de NOT A
+    signal res_notB : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de NOT B
+    signal internal_R : STD_LOGIC_VECTOR(7 downto 0); -- Resultado interno (salida del multiplexor)
 
 begin
 

@@ -3,14 +3,14 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Unit_Reg is
     Port (
-        CLK      : in  STD_LOGIC;
-        C        : in  STD_LOGIC_VECTOR(7 downto 0);
-        DC       : in  STD_LOGIC_VECTOR(2 downto 0);
-        DA       : in  STD_LOGIC_VECTOR(2 downto 0);
-        DB       : in  STD_LOGIC_VECTOR(2 downto 0);
-        L_OR     : in  STD_LOGIC;
-        A        : out STD_LOGIC_VECTOR(7 downto 0);
-        B        : out STD_LOGIC_VECTOR(7 downto 0)
+        CLK      : in  STD_LOGIC;                   -- Señal de reloj
+        C        : in  STD_LOGIC_VECTOR(7 downto 0);-- Datos de entrada a los registros
+        DC       : in  STD_LOGIC_VECTOR(2 downto 0);-- Dirección del registro de escritura (carga)
+        DA       : in  STD_LOGIC_VECTOR(2 downto 0);-- Dirección de lectura para salida A
+        DB       : in  STD_LOGIC_VECTOR(2 downto 0);-- Dirección de lectura para salida B
+        L_OR     : in  STD_LOGIC;                   -- Señal de habilitación OR (carga)
+        A        : out STD_LOGIC_VECTOR(7 downto 0);-- Salida A (8 bits)
+        B        : out STD_LOGIC_VECTOR(7 downto 0) -- Salida B (8 bits)
     );
 end Unit_Reg;
 
@@ -27,10 +27,9 @@ architecture Arq_Unit_Reg of Unit_Reg is
         Port ( I0, I1, I2, I3, I4, I5, I6, I7 : in STD_LOGIC_VECTOR(7 downto 0); S : in STD_LOGIC_VECTOR(2 downto 0); Y : out STD_LOGIC_VECTOR(7 downto 0) );
     end component;
 
-    signal deco_out : STD_LOGIC_VECTOR(7 downto 0);
-    signal w        : STD_LOGIC_VECTOR(7 downto 0);
-
-    signal r0, r1, r2, r3, r4, r5, r6, r7 : STD_LOGIC_VECTOR(7 downto 0);
+    signal deco_out : STD_LOGIC_VECTOR(7 downto 0);  -- Salida del descodificador (habilita uno de los 8 registros)
+    signal w        : STD_LOGIC_VECTOR(7 downto 0);  -- Vector de habilitación de escritura (deco_out OR L_OR)
+    signal r0, r1, r2, r3, r4, r5, r6, r7 : STD_LOGIC_VECTOR(7 downto 0);  -- Salidas de los 8 registros
 begin
     DECO_INST : Deco3a8 port map (S => DC, Y => deco_out);
 

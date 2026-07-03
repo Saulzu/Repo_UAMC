@@ -3,8 +3,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity deco_3a8 is
     Port (
-        S : in  STD_LOGIC_VECTOR (2 downto 0);
-        Y : out STD_LOGIC_VECTOR (7 downto 0)
+        S : in  STD_LOGIC_VECTOR (2 downto 0);  -- Entrada de selección (3 bits)
+        Y : out STD_LOGIC_VECTOR (7 downto 0)   -- Salidas descodificadas (8 líneas, solo una activa)
     );
 end deco_3a8;
 

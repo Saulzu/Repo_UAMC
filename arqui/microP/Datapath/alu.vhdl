@@ -3,15 +3,15 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity ALU is
     Port (
-        A      : in  STD_LOGIC_VECTOR(7 downto 0);
-        B      : in  STD_LOGIC_VECTOR(7 downto 0);
-        S      : in  STD_LOGIC_VECTOR(3 downto 0);
-        Ci     : in  STD_LOGIC;
-        R      : out STD_LOGIC_VECTOR(7 downto 0);
-        C      : out STD_LOGIC;
-        V      : out STD_LOGIC;
-        S_flag : out STD_LOGIC;
-        Z      : out STD_LOGIC
+        A      : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando A (8 bits)
+        B      : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando B (8 bits)
+        S      : in  STD_LOGIC_VECTOR(3 downto 0);  -- Selector de operación (4 bits): S(3)=ALU/Logic, S(2:0)=operación
+        Ci     : in  STD_LOGIC;                     -- Acarreo de entrada
+        R      : out STD_LOGIC_VECTOR(7 downto 0);  -- Resultado final (8 bits)
+        C      : out STD_LOGIC;                     -- Bandera de acarreo (Carry)
+        V      : out STD_LOGIC;                     -- Bandera de overflow
+        S_flag : out STD_LOGIC;                     -- Bandera de signo (bit 7)
+        Z      : out STD_LOGIC                      -- Bandera de cero
     );
 end ALU;
 
@@ -49,10 +49,9 @@ architecture Arq_ALU of ALU is
             );
         end component;
 
-        signal r_ua : STD_LOGIC_VECTOR(7 downto 0);
-        signal r_ul : STD_LOGIC_VECTOR(7 downto 0);
-    
-        signal internal_R : STD_LOGIC_VECTOR(7 downto 0);
+        signal r_ua : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de la Unidad Aritmética
+        signal r_ul : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de la Unidad Lógica
+        signal internal_R : STD_LOGIC_VECTOR(7 downto 0); -- Resultado interno (salida del multiplexor)
 
     begin
 

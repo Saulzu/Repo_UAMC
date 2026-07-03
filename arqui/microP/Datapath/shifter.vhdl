@@ -3,11 +3,11 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Shifterr is
     Port (
-        Q  : in  STD_LOGIC_VECTOR(7 downto 0);
-        S  : in  STD_LOGIC_VECTOR(1 downto 0);
-        D  : out STD_LOGIC_VECTOR(7 downto 0);
-        CI : out STD_LOGIC;
-        CD : out STD_LOGIC
+        Q  : in  STD_LOGIC_VECTOR(7 downto 0);  -- Entrada de datos (8 bits)
+        S  : in  STD_LOGIC_VECTOR(1 downto 0);  -- Selector de desplazamiento (2 bits)
+        D  : out STD_LOGIC_VECTOR(7 downto 0);  -- Salida desplazada (8 bits)
+        CI : out STD_LOGIC;                     -- Acarreo/Desplazado de entrada (izquierda)
+        CD : out STD_LOGIC                      -- Acarreo/Desplazado de salida (derecha)
     );
 end Shifterr;
 
@@ -21,8 +21,8 @@ architecture Arq_Shifterr of Shifterr is
         );
     end component;
 
-    signal out_mux_izq : STD_LOGIC;
-    signal out_mux_der : STD_LOGIC;
+    signal out_mux_izq : STD_LOGIC;  -- Salida del multiplexor izquierdo (bit que sale por izquierda)
+    signal out_mux_der : STD_LOGIC;  -- Salida del multiplexor derecho (bit que sale por derecha)
 begin
     CI <= out_mux_izq;
     CD <= out_mux_der;

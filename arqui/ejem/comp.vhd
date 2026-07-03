@@ -5,11 +5,19 @@ entity comp is
 end comp;
 
 architecture Behavioral of comp is
+  component mi_componente is
+    Port (
+      a : in  STD_LOGIC;
+      b : in  STD_LOGIC;
+      y : out STD_LOGIC
+    );
+  end component;
+
   signal t_a : std_logic := '0';
   signal t_b : std_logic := '0';
   signal t_y : std_logic;
 begin
-  uut : entity work.mi_componente
+  uut : mi_componente
     port map
     (
       a => t_a,
