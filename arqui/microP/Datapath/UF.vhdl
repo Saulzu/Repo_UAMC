@@ -43,10 +43,9 @@ architecture Arq_Unidad_Funcional of Unidad_Funcional is
 
     component Mux_2a1 is
         Port (
-            I0 : in  STD_LOGIC;
-            I1 : in  STD_LOGIC;
-            S  : in  STD_LOGIC;
-            Y  : out STD_LOGIC
+            I : in  STD_LOGIC_VECTOR(1 downto 0);
+            S : in  STD_LOGIC;
+            Y : out STD_LOGIC
         );
     end component;
 
@@ -67,6 +66,9 @@ architecture Arq_Unidad_Funcional of Unidad_Funcional is
     signal internal_R : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado interno antes de salida final
     signal mux_c_inputs : STD_LOGIC_VECTOR(3 downto 0); -- Inputs para multiplexor de bandera C
     signal selector_c   : STD_LOGIC_VECTOR(1 downto 0); -- Selector para multiplexor de bandera C
+    signal sel_mux_r0, sel_mux_r1, sel_mux_r2, sel_mux_r3 : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_r4, sel_mux_r5, sel_mux_r6, sel_mux_r7 : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_v_flag : STD_LOGIC_VECTOR(1 downto 0);
 
 begin
 
@@ -92,23 +94,33 @@ begin
             CD => shift_cd
         );
 
-    MUX_R0 : Mux_2a1 port map (I0 => r_alu(0), I1 => r_shifter(0), S => S(4), Y => internal_R(0));
-    MUX_R1 : Mux_2a1 port map (I0 => r_alu(1), I1 => r_shifter(1), S => S(4), Y => internal_R(1));
-    MUX_R2 : Mux_2a1 port map (I0 => r_alu(2), I1 => r_shifter(2), S => S(4), Y => internal_R(2));
-    MUX_R3 : Mux_2a1 port map (I0 => r_alu(3), I1 => r_shifter(3), S => S(4), Y => internal_R(3));
-    MUX_R4 : Mux_2a1 port map (I0 => r_alu(4), I1 => r_shifter(4), S => S(4), Y => internal_R(4));
-    MUX_R5 : Mux_2a1 port map (I0 => r_alu(5), I1 => r_shifter(5), S => S(4), Y => internal_R(5));
-    MUX_R6 : Mux_2a1 port map (I0 => r_alu(6), I1 => r_shifter(6), S => S(4), Y => internal_R(6));
-    MUX_R7 : Mux_2a1 port map (I0 => r_alu(7), I1 => r_shifter(7), S => S(4), Y => internal_R(7));
+    sel_mux_r0 <= r_shifter(0) & r_alu(0);
+    sel_mux_r1 <= r_shifter(1) & r_alu(1);
+    sel_mux_r2 <= r_shifter(2) & r_alu(2);
+    sel_mux_r3 <= r_shifter(3) & r_alu(3);
+    sel_mux_r4 <= r_shifter(4) & r_alu(4);
+    sel_mux_r5 <= r_shifter(5) & r_alu(5);
+    sel_mux_r6 <= r_shifter(6) & r_alu(6);
+    sel_mux_r7 <= r_shifter(7) & r_alu(7);
+
+    MUX_R0 : Mux_2a1 port map (I => sel_mux_r0, S => S(4), Y => internal_R(0));
+    MUX_R1 : Mux_2a1 port map (I => sel_mux_r1, S => S(4), Y => internal_R(1));
+    MUX_R2 : Mux_2a1 port map (I => sel_mux_r2, S => S(4), Y => internal_R(2));
+    MUX_R3 : Mux_2a1 port map (I => sel_mux_r3, S => S(4), Y => internal_R(3));
+    MUX_R4 : Mux_2a1 port map (I => sel_mux_r4, S => S(4), Y => internal_R(4));
+    MUX_R5 : Mux_2a1 port map (I => sel_mux_r5, S => S(4), Y => internal_R(5));
+    MUX_R6 : Mux_2a1 port map (I => sel_mux_r6, S => S(4), Y => internal_R(6));
+    MUX_R7 : Mux_2a1 port map (I => sel_mux_r7, S => S(4), Y => internal_R(7));
 
     R <= internal_R;
 
+    sel_mux_v_flag <= '0' & alu_v;
+
     MUX_V_FLAG : Mux_2a1 
         port map (
-            I0 => alu_v,
-            I1 => '0',
-            S  => S(4),
-            Y  => V
+            I => sel_mux_v_flag,
+            S => S(4),
+            Y => V
         );
 
     mux_c_inputs(0) <= alu_c;

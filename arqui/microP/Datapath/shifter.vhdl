@@ -14,29 +14,49 @@ end Shifterr;
 architecture Arq_Shifterr of Shifterr is
     component Mux_2a1 is
         Port (
-            I0 : in  STD_LOGIC;
-            I1 : in  STD_LOGIC;
-            S  : in  STD_LOGIC;
-            Y  : out STD_LOGIC
+            I : in  STD_LOGIC_VECTOR(1 downto 0); -- Entradas I(0)=I0, I(1)=I1
+            S : in  STD_LOGIC;
+            Y : out STD_LOGIC
         );
     end component;
 
     signal out_mux_izq : STD_LOGIC;  -- Salida del multiplexor izquierdo (bit que sale por izquierda)
     signal out_mux_der : STD_LOGIC;  -- Salida del multiplexor derecho (bit que sale por derecha)
+    signal sel_mux_izq  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_d7   : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_d6   : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_d5   : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_d4   : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_d3   : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_d2   : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_d1   : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_d0   : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_der  : STD_LOGIC_VECTOR(1 downto 0);
 begin
     CI <= out_mux_izq;
     CD <= out_mux_der;
 
-    Mux_Aux_Izq : Mux_2a1 port map (I0 => Q(0), I1 => '0', S => S(1), Y => out_mux_izq);
+    sel_mux_izq <= '0' & Q(0);
+    sel_mux_d7  <= Q(6) & out_mux_izq;
+    sel_mux_d6  <= Q(5) & Q(7);
+    sel_mux_d5  <= Q(4) & Q(6);
+    sel_mux_d4  <= Q(3) & Q(5);
+    sel_mux_d3  <= Q(2) & Q(4);
+    sel_mux_d2  <= Q(1) & Q(3);
+    sel_mux_d1  <= Q(0) & Q(2);
+    sel_mux_d0  <= out_mux_der & Q(1);
+    sel_mux_der <= Q(7) & '0';
 
-    Mux_D7 : Mux_2a1 port map (I0 => out_mux_izq, I1 => Q(6), S => S(0), Y => D(7));
-    Mux_D6 : Mux_2a1 port map (I0 => Q(7),        I1 => Q(5), S => S(0), Y => D(6));
-    Mux_D5 : Mux_2a1 port map (I0 => Q(6),        I1 => Q(4), S => S(0), Y => D(5));
-    Mux_D4 : Mux_2a1 port map (I0 => Q(5),        I1 => Q(3), S => S(0), Y => D(4));
-    Mux_D3 : Mux_2a1 port map (I0 => Q(4),        I1 => Q(2), S => S(0), Y => D(3));
-    Mux_D2 : Mux_2a1 port map (I0 => Q(3),        I1 => Q(1), S => S(0), Y => D(2));
-    Mux_D1 : Mux_2a1 port map (I0 => Q(2),        I1 => Q(0), S => S(0), Y => D(1));
-    Mux_D0 : Mux_2a1 port map (I0 => Q(1),        I1 => out_mux_der, S => S(0), Y => D(0));
+    Mux_Aux_Izq : Mux_2a1 port map (I => sel_mux_izq, S => S(1), Y => out_mux_izq);
 
-    Mux_Aux_Der : Mux_2a1 port map (I0 => '0', I1 => Q(7), S => S(1), Y => out_mux_der);
+    Mux_D7 : Mux_2a1 port map (I => sel_mux_d7, S => S(0), Y => D(7));
+    Mux_D6 : Mux_2a1 port map (I => sel_mux_d6, S => S(0), Y => D(6));
+    Mux_D5 : Mux_2a1 port map (I => sel_mux_d5, S => S(0), Y => D(5));
+    Mux_D4 : Mux_2a1 port map (I => sel_mux_d4, S => S(0), Y => D(4));
+    Mux_D3 : Mux_2a1 port map (I => sel_mux_d3, S => S(0), Y => D(3));
+    Mux_D2 : Mux_2a1 port map (I => sel_mux_d2, S => S(0), Y => D(2));
+    Mux_D1 : Mux_2a1 port map (I => sel_mux_d1, S => S(0), Y => D(1));
+    Mux_D0 : Mux_2a1 port map (I => sel_mux_d0, S => S(0), Y => D(0));
+
+    Mux_Aux_Der : Mux_2a1 port map (I => sel_mux_der, S => S(1), Y => out_mux_der);
 end Arq_Shifterr;

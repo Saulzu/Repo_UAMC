@@ -13,12 +13,11 @@ end PC;
 architecture Arq_PC of PC is
 
     
-    component Mux_2a1_n is
+    component Mux_2a1 is
         Port (
-            I0 : in  STD_LOGIC;
-            I1 : in  STD_LOGIC;
-            S  : in  STD_LOGIC;
-            Y  : out STD_LOGIC
+            I : in  STD_LOGIC_VECTOR(1 downto 0); -- Entradas I(0)=I0, I(1)=I1
+            S : in  STD_LOGIC;
+            Y : out STD_LOGIC
         );
     end component;
 
@@ -35,6 +34,22 @@ architecture Arq_PC of PC is
     signal d_reg : STD_LOGIC_VECTOR(15 downto 0);  -- Entrada a los flip-flops (resultado del multiplexor)
     signal inc   : STD_LOGIC_VECTOR(15 downto 0);  -- Salida del incrementador (+1)
     signal carry : STD_LOGIC_VECTOR(15 downto 0);  -- Cadena de acarreos del incrementador
+    signal sel_mux_pc0  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc1  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc2  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc3  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc4  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc5  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc6  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc7  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc8  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc9  : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc10 : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc11 : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc12 : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc13 : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc14 : STD_LOGIC_VECTOR(1 downto 0);
+    signal sel_mux_pc15 : STD_LOGIC_VECTOR(1 downto 0);
 
 begin
 
@@ -87,52 +102,69 @@ begin
 
     inc(15)  <= q_reg(15) xor carry(14);
     
-    MUX0 : Mux_2a1_n port map (I0 => inc(0),  I1 => C(0),  S => W, Y => d_reg(0));
+    sel_mux_pc0  <= C(0) & inc(0);
+    sel_mux_pc1  <= C(1) & inc(1);
+    sel_mux_pc2  <= C(2) & inc(2);
+    sel_mux_pc3  <= C(3) & inc(3);
+    sel_mux_pc4  <= C(4) & inc(4);
+    sel_mux_pc5  <= C(5) & inc(5);
+    sel_mux_pc6  <= C(6) & inc(6);
+    sel_mux_pc7  <= C(7) & inc(7);
+    sel_mux_pc8  <= C(8) & inc(8);
+    sel_mux_pc9  <= C(9) & inc(9);
+    sel_mux_pc10 <= C(10) & inc(10);
+    sel_mux_pc11 <= C(11) & inc(11);
+    sel_mux_pc12 <= C(12) & inc(12);
+    sel_mux_pc13 <= C(13) & inc(13);
+    sel_mux_pc14 <= C(14) & inc(14);
+    sel_mux_pc15 <= C(15) & inc(15);
+
+    MUX0 : Mux_2a1 port map (I => sel_mux_pc0,  S => W, Y => d_reg(0));
     FF0  : FlipFlopD port map (CLK => CLK, D => d_reg(0),  Q => q_reg(0));
 
-    MUX1 : Mux_2a1_n port map (I0 => inc(1),  I1 => C(1),  S => W, Y => d_reg(1));
+    MUX1 : Mux_2a1 port map (I => sel_mux_pc1,  S => W, Y => d_reg(1));
     FF1  : FlipFlopD port map (CLK => CLK, D => d_reg(1),  Q => q_reg(1));
 
-    MUX2 : Mux_2a1_n port map (I0 => inc(2),  I1 => C(2),  S => W, Y => d_reg(2));
+    MUX2 : Mux_2a1 port map (I => sel_mux_pc2,  S => W, Y => d_reg(2));
     FF2  : FlipFlopD port map (CLK => CLK, D => d_reg(2),  Q => q_reg(2));
 
-    MUX3 : Mux_2a1_n port map (I0 => inc(3),  I1 => C(3),  S => W, Y => d_reg(3));
+    MUX3 : Mux_2a1 port map (I => sel_mux_pc3,  S => W, Y => d_reg(3));
     FF3  : FlipFlopD port map (CLK => CLK, D => d_reg(3),  Q => q_reg(3));
 
-    MUX4 : Mux_2a1_n port map (I0 => inc(4),  I1 => C(4),  S => W, Y => d_reg(4));
+    MUX4 : Mux_2a1 port map (I => sel_mux_pc4,  S => W, Y => d_reg(4));
     FF4  : FlipFlopD port map (CLK => CLK, D => d_reg(4),  Q => q_reg(4));
 
-    MUX5 : Mux_2a1_n port map (I0 => inc(5),  I1 => C(5),  S => W, Y => d_reg(5));
+    MUX5 : Mux_2a1 port map (I => sel_mux_pc5,  S => W, Y => d_reg(5));
     FF5  : FlipFlopD port map (CLK => CLK, D => d_reg(5),  Q => q_reg(5));
 
-    MUX6 : Mux_2a1_n port map (I0 => inc(6),  I1 => C(6),  S => W, Y => d_reg(6));
+    MUX6 : Mux_2a1 port map (I => sel_mux_pc6,  S => W, Y => d_reg(6));
     FF6  : FlipFlopD port map (CLK => CLK, D => d_reg(6),  Q => q_reg(6));
 
-    MUX7 : Mux_2a1_n port map (I0 => inc(7),  I1 => C(7),  S => W, Y => d_reg(7));
+    MUX7 : Mux_2a1 port map (I => sel_mux_pc7,  S => W, Y => d_reg(7));
     FF7  : FlipFlopD port map (CLK => CLK, D => d_reg(7),  Q => q_reg(7));
 
-    MUX8 : Mux_2a1_n port map (I0 => inc(8),  I1 => C(8),  S => W, Y => d_reg(8));
+    MUX8 : Mux_2a1 port map (I => sel_mux_pc8,  S => W, Y => d_reg(8));
     FF8  : FlipFlopD port map (CLK => CLK, D => d_reg(8),  Q => q_reg(8));
 
-    MUX9 : Mux_2a1_n port map (I0 => inc(9),  I1 => C(9),  S => W, Y => d_reg(9));
+    MUX9 : Mux_2a1 port map (I => sel_mux_pc9,  S => W, Y => d_reg(9));
     FF9  : FlipFlopD port map (CLK => CLK, D => d_reg(9),  Q => q_reg(9));
 
-    MUX10: Mux_2a1_n port map (I0 => inc(10), I1 => C(10), S => W, Y => d_reg(10));
+    MUX10: Mux_2a1 port map (I => sel_mux_pc10, S => W, Y => d_reg(10));
     FF10 : FlipFlopD port map (CLK => CLK, D => d_reg(10), Q => q_reg(10));
 
-    MUX11: Mux_2a1_n port map (I0 => inc(11), I1 => C(11), S => W, Y => d_reg(11));
+    MUX11: Mux_2a1 port map (I => sel_mux_pc11, S => W, Y => d_reg(11));
     FF11 : FlipFlopD port map (CLK => CLK, D => d_reg(11), Q => q_reg(11));
 
-    MUX12: Mux_2a1_n port map (I0 => inc(12), I1 => C(12), S => W, Y => d_reg(12));
+    MUX12: Mux_2a1 port map (I => sel_mux_pc12, S => W, Y => d_reg(12));
     FF12 : FlipFlopD port map (CLK => CLK, D => d_reg(12), Q => q_reg(12));
 
-    MUX13: Mux_2a1_n port map (I0 => inc(13), I1 => C(13), S => W, Y => d_reg(13));
+    MUX13: Mux_2a1 port map (I => sel_mux_pc13, S => W, Y => d_reg(13));
     FF13 : FlipFlopD port map (CLK => CLK, D => d_reg(13), Q => q_reg(13));
 
-    MUX14: Mux_2a1_n port map (I0 => inc(14), I1 => C(14), S => W, Y => d_reg(14));
+    MUX14: Mux_2a1 port map (I => sel_mux_pc14, S => W, Y => d_reg(14));
     FF14 : FlipFlopD port map (CLK => CLK, D => d_reg(14), Q => q_reg(14));
 
-    MUX15: Mux_2a1_n port map (I0 => inc(15), I1 => C(15), S => W, Y => d_reg(15));
+    MUX15: Mux_2a1 port map (I => sel_mux_pc15, S => W, Y => d_reg(15));
     FF15 : FlipFlopD port map (CLK => CLK, D => d_reg(15), Q => q_reg(15));
 
 end Arq_PC;

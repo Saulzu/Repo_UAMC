@@ -1,65 +1,35 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+library IEEE; 
+use IEEE.STD_LOGIC_1164.ALL; 
 
-entity Unidad_Logica is
-    Port (
-        A : in  STD_LOGIC_VECTOR(7 downto 0);      -- Operando A (8 bits)
-        B : in  STD_LOGIC_VECTOR(7 downto 0);      -- Operando B (8 bits)
-        S : in  STD_LOGIC_VECTOR(2 downto 0);      -- Selector de operación (3 bits)
-        R : out STD_LOGIC_VECTOR(7 downto 0);      -- Resultado de la operación lógica (8 bits)
-        S_flag : out STD_LOGIC;                    -- Bandera de signo (bit 7 del resultado)
-        Z : out STD_LOGIC                          -- Bandera de cero
+entity Unidad_Logica is 
+    Port ( 
+        A : in STD_LOGIC_VECTOR(7 downto 0); 
+        B : in STD_LOGIC_VECTOR(7 downto 0); 
+        S : in STD_LOGIC_VECTOR(2 downto 0); 
+        R : out STD_LOGIC_VECTOR(7 downto 0); 
+        S_flag : out STD_LOGIC; 
+        Z : out STD_LOGIC 
     );
 end Unidad_Logica;
 
-architecture Arq_Unidad_Logica of Unidad_Logica is
+architecture Arq_Unidad_Logica of Unidad_Logica is 
+    signal R_internal : STD_LOGIC_VECTOR(7 downto 0);
+begin 
+    -- Lógica booleana pura evaluando el selector S(1) y S(0)
+    R_internal <= 
+        (A and B and (7 downto 0 => (not S(1) and not S(0)))) or
+        ((A or B) and (7 downto 0 => (not S(1) and S(0)))) or
+        ((A xor B) and (7 downto 0 => (S(1) and not S(0)))) or
+        ((not A) and (7 downto 0 => (S(1) and S(0))));
 
-    component Mux8a1 is
-        Port(
-            I0,I1,I2,I3,I4,I5,I6,I7 : in STD_LOGIC_VECTOR(7 downto 0);
-            S : in STD_LOGIC_VECTOR(2 downto 0);
-            Y : out STD_LOGIC_VECTOR(7 downto 0)
-        );
-    end component;
+    -- Asignación a la salida
+    R <= R_internal;
 
-    signal res_and  : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A AND B
-    signal res_or   : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A OR B
-    signal res_xor  : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A XOR B
-    signal res_nor  : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A NOR B
-    signal res_nand : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de A NAND B
-    signal res_notA : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de NOT A
-    signal res_notB : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de NOT B
-    signal internal_R : STD_LOGIC_VECTOR(7 downto 0); -- Resultado interno (salida del multiplexor)
-
-begin
-
-    res_and  <= A and B;
-    res_or   <= A or B;
-    res_xor  <= A xor B;
-    res_nor  <= A nor B;
-    res_nand <= A nand B;
-    res_notA <= not A;
-    res_notB <= not B;
-
-    MUX_UL : Mux8a1 
-        port map (
-            I0 => res_and,
-            I1 => res_or,
-            I2 => res_xor,
-            I3 => res_nor,
-            I4 => res_nand,
-            I5 => res_notA,
-            I6 => res_notB,
-            I7 => B,
-            S  => S,
-            Y  => internal_R
-        );
-
-    R <= internal_R;
-
-    S_flag <= internal_R(7);
-
-    Z <= not (internal_R(7) or internal_R(6) or internal_R(5) or internal_R(4) or 
-              internal_R(3) or internal_R(2) or internal_R(1) or internal_R(0));
+    -- Banderas generadas por compuertas lógicas
+    S_flag <= R_internal(7);
+    
+    -- La bandera Z es una compuerta NOR de todos los bits del resultado
+    Z <= not (R_internal(7) or R_internal(6) or R_internal(5) or R_internal(4) or 
+              R_internal(3) or R_internal(2) or R_internal(1) or R_internal(0));
 
 end Arq_Unidad_Logica;

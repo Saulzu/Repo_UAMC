@@ -9,9 +9,8 @@ entity FlipFlopD is
     );
 end FlipFlopD;
 
-architecture Arq_FlipFlopD of FlipFlopD is
+architecture Arq_flipFlopD of flipFlopD is
 begin
-
     process(CLK)
     begin
         if rising_edge(CLK) then
@@ -19,4 +18,4 @@ begin
         end if;
     end process;
 
-end Arq_FlipFlopD;
+end Arq_flipFlopD;

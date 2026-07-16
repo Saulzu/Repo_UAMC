@@ -2,86 +2,133 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity UC is
-    Port (
-        CLK           : in  STD_LOGIC;                       -- Señal de reloj del sistema
-        InA           : in  STD_LOGIC;                       -- Entrada de control A del secuenciador
-        InB           : in  STD_LOGIC;                       -- Entrada de control B del secuenciador
-        w_prime       : in  STD_LOGIC;                       -- Señal de habilitación para escritura en IR
-        mw_param      : in  STD_LOGIC;                       -- Parámetro de control de escritura en memoria
-        D_Memoria_16  : in  STD_LOGIC_VECTOR(15 downto 0);  -- Datos desde memoria para cargar en PC
-        D_Memoria_26  : in  STD_LOGIC_VECTOR(25 downto 0);  -- Datos desde memoria para cargar en IR
-        PC_Out        : out STD_LOGIC_VECTOR(15 downto 0);  -- Salida del contador de programa
-        IR_Out        : out STD_LOGIC_VECTOR(25 downto 0);  -- Salida del registro de instrucción
-        MW_Output     : out STD_LOGIC                       -- Señal de habilitación de escritura en memoria
+    Port ( 
+        CLK          : in  STD_LOGIC;                       -- Señal de reloj principal de la Unidad de Control
+        InA, InB     : in  STD_LOGIC;                       -- Entradas de control del secuenciador
+        w_prime      : in  STD_LOGIC;                       -- Habilitador de escritura del IR durante el ciclo de fetch
+        mw_param     : in  STD_LOGIC;                       -- Parámetro de control para salida de memoria/escritura
+        D_Memoria_16 : in  STD_LOGIC_VECTOR(15 downto 0);    -- Bus de 16 bits para direccionamiento o datos de memoria
+        D_Memoria_26 : in  STD_LOGIC_VECTOR(25 downto 0);    -- Bus de 26 bits con instrucción completa desde memoria
+        
+        -- Banderas del Datapath necesarias para la lógica de salto
+        C_flag       : in  STD_LOGIC;                       -- Bandera de acarreo
+        S_flag       : in  STD_LOGIC;                       -- Bandera de signo
+        V_flag       : in  STD_LOGIC;                       -- Bandera de overflow
+        Z_flag       : in  STD_LOGIC;                       -- Bandera de cero
+        
+        PC_Out       : out STD_LOGIC_VECTOR(15 downto 0);   -- Salida de la dirección actual del PC
+        IR_Out       : out STD_LOGIC_VECTOR(25 downto 0);   -- Salida de la instrucción actual almacenada en IR
+        MW_Output    : out STD_LOGIC                        -- Señal de control para escritura en memoria o memoria de datos
     );
 end UC;
 
 architecture Arq_Uc of UC is
 
-    component Sec is
-        Port (
-            CLK : in  STD_LOGIC;
-            InA : in  STD_LOGIC;
-            InB : in  STD_LOGIC;
-            e0  : out STD_LOGIC;
-            e1  : out STD_LOGIC;
-            e2  : out STD_LOGIC;
-            e3  : out STD_LOGIC
-        );
+    -- 1. Declaración de Componentes
+    component PC is 
+        Port ( CLK, W : in STD_LOGIC; C : in STD_LOGIC_VECTOR(15 downto 0); Q : out STD_LOGIC_VECTOR(15 downto 0) ); 
+    end component;
+    
+    component Ir is 
+        Port ( CLK, W : in STD_LOGIC; D : in STD_LOGIC_VECTOR(25 downto 0); Q : out STD_LOGIC_VECTOR(25 downto 0) ); 
+    end component;
+    
+    component Sec is 
+        Port ( CLK, InA, InB : in STD_LOGIC; e0, e1, e2, e3 : out STD_LOGIC ); 
     end component;
 
-    component PC is
-        Port (
-            CLK : in  STD_LOGIC;
-            W   : in  STD_LOGIC;
-            C   : in  STD_LOGIC_VECTOR(15 downto 0);
-            Q   : out STD_LOGIC_VECTOR(15 downto 0)
-        );
+    -- Componentes estructurales añadidos del diagrama
+    component Sumador_16b is
+        Port ( A, B : in STD_LOGIC_VECTOR(15 downto 0); Cin : in STD_LOGIC; S : out STD_LOGIC_VECTOR(15 downto 0); Cout : out STD_LOGIC );
     end component;
 
-    component Ir is
-        Port (
-            CLK : in  STD_LOGIC;
-            W   : in  STD_LOGIC;
-            D   : in  STD_LOGIC_VECTOR(25 downto 0);
-            Q   : out STD_LOGIC_VECTOR(25 downto 0)
-        );
+    component Mux_2a1_16b is
+        Port ( I0, I1 : in STD_LOGIC_VECTOR(15 downto 0); S : in STD_LOGIC; Y : out STD_LOGIC_VECTOR(15 downto 0) );
     end component;
 
-    signal e0, e1, e2, e3 : STD_LOGIC;  -- Estados del secuenciador (salidas del descodificador)
-    signal w_ir : STD_LOGIC;            -- Señal de habilitación de escritura en IR (AND de e1 y w_prime)
+    -- 2. Señales Internas
+    signal e0, e1, e2, e3 : STD_LOGIC;                    -- Salidas del secuenciador que determinan el paso del ciclo
+    signal pc_w_signal    : STD_LOGIC;                    -- Habilitador de carga del PC
+    signal w_ir_internal  : STD_LOGIC;                    -- Habilitador interno de escritura del IR
+    
+    -- Señales para rutear las salidas de los registros
+    signal q_pc_internal  : STD_LOGIC_VECTOR(15 downto 0); -- Salida interna del PC
+    signal q_ir_internal  : STD_LOGIC_VECTOR(25 downto 0); -- Salida interna del IR
+    
+    -- Señales de los nuevos componentes
+    signal out_sumador    : STD_LOGIC_VECTOR(15 downto 0); -- Resultado de la suma PC + offset
+    signal out_mux2a1_pc  : STD_LOGIC_VECTOR(15 downto 0); -- Salida final del MUX hacia el PC
+    
+    -- Señales para el selector del MUX (Compuertas del diagrama)
+    signal selector_mux2  : STD_LOGIC;                    -- Señal de selección del MUX de salto
+    signal m0, m1, m2, m3, m4, m5, m6, m7 : STD_LOGIC;     -- Minterminos lógicos para la condición de salto
+    signal jump_condition : STD_LOGIC;                    -- Condición de salto combinada desde las banderas
 
 begin
+    -- 3. Instancia del Secuenciador
+    SECUENCIADOR_INST : Sec port map (
+        CLK => CLK, InA => InA, InB => InB, 
+        e0 => e0, e1 => e1, e2 => e2, e3 => e3
+    );
 
-    SECUENCIADOR_INST : Sec
-        port map (
-            CLK => CLK,
-            InA => InA,
-            InB => InB,
-            e0  => e0,
-            e1  => e1,
-            e2  => e2,
-            e3  => e3
-        );
+    -- 4. Instancia del Registro de Instrucción (IR)
+    IR_BLOCK : Ir port map (
+        CLK => CLK, 
+        W   => w_ir_internal, 
+        D   => D_Memoria_26, 
+        Q   => q_ir_internal
+    );
 
-    PC_BLOCK : PC
-        port map (
-            CLK => CLK,
-            W   => e0,
-            C   => D_Memoria_16,
-            Q   => PC_Out
-        );
+    -- Lógica Booleana Pura (Palabra de Control)
+    pc_w_signal   <= e0; 
+    w_ir_internal <= e1 and w_prime;
+    MW_Output     <= e1 and mw_param;
 
-    w_ir <= e1 and w_prime;
+    -- 5. Lógica del MUX 8a1 a nivel de compuertas (Evaluador de banderas)
+    -- Usa los bits S(2:0) del IR para seleccionar la bandera correspondiente.
+    m0 <= not q_ir_internal(2) and not q_ir_internal(1) and not q_ir_internal(0) and C_flag;
+    m1 <= not q_ir_internal(2) and not q_ir_internal(1) and     q_ir_internal(0) and S_flag;
+    m2 <= not q_ir_internal(2) and     q_ir_internal(1) and not q_ir_internal(0) and V_flag;
+    m3 <= not q_ir_internal(2) and     q_ir_internal(1) and     q_ir_internal(0) and Z_flag;
+    m4 <=     q_ir_internal(2) and not q_ir_internal(1) and not q_ir_internal(0) and not C_flag;
+    m5 <=     q_ir_internal(2) and not q_ir_internal(1) and     q_ir_internal(0) and not S_flag;
+    m6 <=     q_ir_internal(2) and     q_ir_internal(1) and not q_ir_internal(0) and not V_flag;
+    m7 <=     q_ir_internal(2) and     q_ir_internal(1) and     q_ir_internal(0) and not Z_flag;
 
-    MW_Output <= e1 and mw_param;
+    -- Compuerta OR principal del diagrama
+    jump_condition <= m0 or m1 or m2 or m3 or m4 or m5 or m6 or m7;
 
-    IR_BLOCK : Ir
-        port map (
-            CLK => CLK,
-            W   => w_ir,
-            D   => D_Memoria_26,
-            Q   => IR_Out
-        );
+    -- Compuerta AND del diagrama (Condición de salto combinada con un estado/habilitador)
+    -- Asumimos que el salto ocurre durante e2
+    selector_mux2 <= jump_condition and e2;
+
+    -- 6. Instancia del Sumador (Suma el PC actual + Offset del IR)
+    SUMADOR_PC : Sumador_16b port map (
+        A    => q_pc_internal,
+        B    => q_ir_internal(15 downto 0), -- Asumiendo que el offset viene en los 16 LSB del IR
+        Cin  => '0',
+        S    => out_sumador,
+        Cout => open
+    );
+
+    -- 7. Instancia del Mux 2a1 (Conecta la Memoria o el Salto al PC)
+    MUX_PC_INST : Mux_2a1_16b port map (
+        I0 => D_Memoria_16,   -- Dirección secuencial
+        I1 => out_sumador,    -- Dirección de salto
+        S  => selector_mux2,  -- Lógica generada arriba
+        Y  => out_mux2a1_pc
+    );
+
+    -- 8. Instancia del Contador de Programa (PC)
+    PC_BLOCK : PC port map (
+        CLK => CLK, 
+        W   => pc_w_signal, 
+        C   => out_mux2a1_pc, -- Ahora se alimenta del Mux, como dicta el diagrama
+        Q   => q_pc_internal
+    );
+
+    -- Ruteo a los puertos de salida de la entidad
+    PC_Out <= q_pc_internal;
+    IR_Out <= q_ir_internal;
 
 end Arq_Uc;
