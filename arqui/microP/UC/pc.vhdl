@@ -30,26 +30,26 @@ architecture Arq_PC of PC is
     end component;
 
     
-    signal q_reg : STD_LOGIC_VECTOR(15 downto 0);  -- Estado actual del contador (salida de flip-flops)
-    signal d_reg : STD_LOGIC_VECTOR(15 downto 0);  -- Entrada a los flip-flops (resultado del multiplexor)
-    signal inc   : STD_LOGIC_VECTOR(15 downto 0);  -- Salida del incrementador (+1)
-    signal carry : STD_LOGIC_VECTOR(15 downto 0);  -- Cadena de acarreos del incrementador
-    signal sel_mux_pc0  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc1  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc2  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc3  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc4  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc5  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc6  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc7  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc8  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc9  : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc10 : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc11 : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc12 : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc13 : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc14 : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_pc15 : STD_LOGIC_VECTOR(1 downto 0);
+    signal q_reg : STD_LOGIC_VECTOR(15 downto 0);  -- Dirección actual del programa (salida de los flip-flops del PC)
+    signal d_reg : STD_LOGIC_VECTOR(15 downto 0);  -- Entrada a los flip-flops (selección entre incremento o carga paralela)
+    signal inc   : STD_LOGIC_VECTOR(15 downto 0);  -- Valor incrementado (PC + 1)
+    signal carry : STD_LOGIC_VECTOR(15 downto 0);  -- Cadena de acarreos del incrementador de 16 bits
+    signal sel_mux_pc0  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 0 del PC
+    signal sel_mux_pc1  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 1 del PC
+    signal sel_mux_pc2  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 2 del PC
+    signal sel_mux_pc3  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 3 del PC
+    signal sel_mux_pc4  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 4 del PC
+    signal sel_mux_pc5  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 5 del PC
+    signal sel_mux_pc6  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 6 del PC
+    signal sel_mux_pc7  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 7 del PC
+    signal sel_mux_pc8  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 8 del PC
+    signal sel_mux_pc9  : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 9 del PC
+    signal sel_mux_pc10 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 10 del PC
+    signal sel_mux_pc11 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 11 del PC
+    signal sel_mux_pc12 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 12 del PC
+    signal sel_mux_pc13 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 13 del PC
+    signal sel_mux_pc14 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 14 del PC
+    signal sel_mux_pc15 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas para multiplexor del bit 15 del PC
 
 begin
 

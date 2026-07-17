@@ -19,46 +19,46 @@ architecture Arq_ALU of ALU is
 
         component Unidad_Logica is
             Port (
-                A      : in  STD_LOGIC_VECTOR(7 downto 0);
-                B      : in  STD_LOGIC_VECTOR(7 downto 0);
-                S      : in  STD_LOGIC_VECTOR(2 downto 0);
-                R      : out STD_LOGIC_VECTOR(7 downto 0);
-                S_flag : out STD_LOGIC;
-                Z      : out STD_LOGIC
+                A      : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando A
+                B      : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando B
+                S      : in  STD_LOGIC_VECTOR(2 downto 0);  -- Selector de operación
+                R      : out STD_LOGIC_VECTOR(7 downto 0);  -- Resultado lógico
+                S_flag : out STD_LOGIC;                    -- Bandera de signo
+                Z      : out STD_LOGIC                     -- Bandera de cero
             );
         end component;
 
         component Unidad_Aritmetica is
             Port (
-                A  : in  STD_LOGIC_VECTOR(7 downto 0);
-                B  : in  STD_LOGIC_VECTOR(7 downto 0);
-                S  : in  STD_LOGIC_VECTOR(2 downto 0);
-                Ci : in  STD_LOGIC;
-                R  : out STD_LOGIC_VECTOR(7 downto 0);
-                Co : out STD_LOGIC;
-                Vo : out STD_LOGIC
+                A  : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando A
+                B  : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando B
+                S  : in  STD_LOGIC_VECTOR(2 downto 0);  -- Selector de operación
+                Ci : in  STD_LOGIC;                     -- Acarreo de entrada
+                R  : out STD_LOGIC_VECTOR(7 downto 0);  -- Resultado aritmético
+                Co : out STD_LOGIC;                     -- Acarreo de salida
+                Vo : out STD_LOGIC                      -- Overflow
             );
         end component;
 
         component Mux_2a1 is
             Port (
-                I : in  STD_LOGIC_VECTOR(1 downto 0); -- Entradas I(0)=I0, I(1)=I1
-                S : in  STD_LOGIC;
-                Y : out STD_LOGIC
+                I : in  STD_LOGIC_VECTOR(1 downto 0);  -- Dos entradas (0=lógica, 1=aritmética)
+                S : in  STD_LOGIC;                     -- Señal de selección
+                Y : out STD_LOGIC                      -- Salida seleccionada
             );
         end component;
 
         signal r_ua : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de la Unidad Aritmética
         signal r_ul : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de la Unidad Lógica
-        signal internal_R : STD_LOGIC_VECTOR(7 downto 0); -- Resultado interno (salida del multiplexor)
-        signal sel_mux_r0 : STD_LOGIC_VECTOR(1 downto 0);
-        signal sel_mux_r1 : STD_LOGIC_VECTOR(1 downto 0);
-        signal sel_mux_r2 : STD_LOGIC_VECTOR(1 downto 0);
-        signal sel_mux_r3 : STD_LOGIC_VECTOR(1 downto 0);
-        signal sel_mux_r4 : STD_LOGIC_VECTOR(1 downto 0);
-        signal sel_mux_r5 : STD_LOGIC_VECTOR(1 downto 0);
-        signal sel_mux_r6 : STD_LOGIC_VECTOR(1 downto 0);
-        signal sel_mux_r7 : STD_LOGIC_VECTOR(1 downto 0);
+        signal internal_R : STD_LOGIC_VECTOR(7 downto 0); -- Resultado seleccionado (ALU o Lógica) por el selector S(3)
+        signal sel_mux_r0 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas del multiplexor para el bit 0 (r_ul(0) & r_ua(0))
+        signal sel_mux_r1 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas del multiplexor para el bit 1
+        signal sel_mux_r2 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas del multiplexor para el bit 2
+        signal sel_mux_r3 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas del multiplexor para el bit 3
+        signal sel_mux_r4 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas del multiplexor para el bit 4
+        signal sel_mux_r5 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas del multiplexor para el bit 5
+        signal sel_mux_r6 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas del multiplexor para el bit 6
+        signal sel_mux_r7 : STD_LOGIC_VECTOR(1 downto 0);  -- Entradas del multiplexor para el bit 7
 
     begin
 

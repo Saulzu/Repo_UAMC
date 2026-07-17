@@ -3,9 +3,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Microprocesador is
     Port (
-        CLK : in STD_LOGIC;
-        -- Puertos adicionales externos si se requieren pines de I/O
-        RST : in STD_LOGIC 
+        CLK : in STD_LOGIC;  -- Señal de reloj principal del sistema
+        RST : in STD_LOGIC   -- Señal de reset (no implementado actualmente)
     );
 end Microprocesador;
 
@@ -44,11 +43,11 @@ architecture Estructural of Microprocesador is
         );
     end component;
 
-    -- Señales internas de interconexión
-    signal C_out, S_out, V_out, Z_out : STD_LOGIC;
-    signal Instruction_Bus : STD_LOGIC_VECTOR(25 downto 0);
-    signal PC_Bus : STD_LOGIC_VECTOR(15 downto 0);
-    signal Jump_Signal : STD_LOGIC;
+    -- Señales internas de interconexión entre componentes
+    signal C_out, S_out, V_out, Z_out : STD_LOGIC;  -- Banderas de salida del Datapath (Carry, Sign, oVerflow, Zero)
+    signal Instruction_Bus : STD_LOGIC_VECTOR(25 downto 0);  -- Bus de instrucción desde el IR hacia Datapath y Lógica de Saltos
+    signal PC_Bus : STD_LOGIC_VECTOR(15 downto 0);  -- Dirección del programa actual desde el PC
+    signal Jump_Signal : STD_LOGIC;  -- Señal de control: 1 si debe tomarse un salto condicional
 
 begin
 

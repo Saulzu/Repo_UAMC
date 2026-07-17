@@ -21,9 +21,9 @@ architecture Arq_Ir of Ir is
         );
     end component;
 
-    signal q_reg : STD_LOGIC_VECTOR(25 downto 0);  -- Estado actual del registro (salida de los flip-flops)
-    signal d_reg : STD_LOGIC_VECTOR(25 downto 0);  -- Entrada a los flip-flops (resultado del multiplexor)
-    signal W_n   : STD_LOGIC;                       -- Inversa de W para la realimentación
+    signal q_reg : STD_LOGIC_VECTOR(25 downto 0);  -- Estado actual del registro IR (salida de los 26 flip-flops)
+    signal d_reg : STD_LOGIC_VECTOR(25 downto 0);  -- Entrada a los flip-flops (resultado del multiplexor de realimentación)
+    signal W_n   : STD_LOGIC;                       -- Inversa de W para la realimentación (si W=0 retiene, si W=1 carga)
 
 begin
 

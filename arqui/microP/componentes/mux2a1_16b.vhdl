@@ -11,15 +11,12 @@ entity Mux_2a1_16b is
 end Mux_2a1_16b;
 
 architecture Arq_Mux_2a1_16b of Mux_2a1_16b is
-    -- Señales internas para expandir el bit del selector a 16 bits
-    signal S_vector     : STD_LOGIC_VECTOR(15 downto 0);
-    signal not_S_vector : STD_LOGIC_VECTOR(15 downto 0);
+    signal S_vector     : STD_LOGIC_VECTOR(15 downto 0);  -- Replicación del selector en 16 bits
+    signal not_S_vector : STD_LOGIC_VECTOR(15 downto 0);  -- Inverso del selector replicado en 16 bits
 begin
-    -- Replicamos el bit 'S' y su negado a los 16 bits del vector
     S_vector     <= (others => S);
     not_S_vector <= (others => not S);
 
-    -- Lógica Booleana Pura (Suma de productos) a nivel de bus
     Y <= (I0 and not_S_vector) or (I1 and S_vector);
 
 end Arq_Mux_2a1_16b;

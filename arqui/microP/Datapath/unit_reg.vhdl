@@ -16,20 +16,32 @@ end Unit_Reg;
 
 architecture Arq_Unit_Reg of Unit_Reg is
     component Deco3a8 is
-        Port ( S: in STD_LOGIC_VECTOR(2 downto 0); Y : out STD_LOGIC_VECTOR(7 downto 0) );
+        Port ( 
+            S: in STD_LOGIC_VECTOR(2 downto 0);  -- Dirección de selección (3 bits)
+            Y : out STD_LOGIC_VECTOR(7 downto 0)  -- Líneas de activación (8 líneas)
+        ); 
     end component;
     
     component Reg8b is
-        Port ( CLK : in STD_LOGIC; W : in STD_LOGIC; D : in STD_LOGIC_VECTOR(7 downto 0); Q : out STD_LOGIC_VECTOR(7 downto 0) );
+        Port ( 
+            CLK : in STD_LOGIC;  -- Señal de reloj
+            W : in STD_LOGIC;    -- Habilitación de escritura
+            D : in STD_LOGIC_VECTOR(7 downto 0);   -- Datos de entrada
+            Q : out STD_LOGIC_VECTOR(7 downto 0)   -- Datos almacenados
+        ); 
     end component;
 
     component Mux8a1 is
-        Port ( I0, I1, I2, I3, I4, I5, I6, I7 : in STD_LOGIC_VECTOR(7 downto 0); S : in STD_LOGIC_VECTOR(2 downto 0); Y : out STD_LOGIC_VECTOR(7 downto 0) );
+        Port ( 
+            I0, I1, I2, I3, I4, I5, I6, I7 : in STD_LOGIC_VECTOR(7 downto 0);  -- 8 entradas
+            S : in STD_LOGIC_VECTOR(2 downto 0);   -- Selector (3 bits)
+            Y : out STD_LOGIC_VECTOR(7 downto 0)   -- Salida seleccionada
+        ); 
     end component;
 
-    signal deco_out : STD_LOGIC_VECTOR(7 downto 0);  -- Salida del descodificador (habilita uno de los 8 registros)
-    signal w        : STD_LOGIC_VECTOR(7 downto 0);  -- Vector de habilitación de escritura (deco_out OR L_OR)
-    signal r0, r1, r2, r3, r4, r5, r6, r7 : STD_LOGIC_VECTOR(7 downto 0);  -- Salidas de los 8 registros
+    signal deco_out : STD_LOGIC_VECTOR(7 downto 0);  -- Salida del descodificador (activa 1 de 8 líneas)
+    signal w        : STD_LOGIC_VECTOR(7 downto 0);  -- Vector de habilitación de escritura (OR del deco con L_OR)
+    signal r0, r1, r2, r3, r4, r5, r6, r7 : STD_LOGIC_VECTOR(7 downto 0);  -- Datos almacenados en los 8 registros
 begin
     DECO_INST : Deco3a8 port map (S => DC, Y => deco_out);
 

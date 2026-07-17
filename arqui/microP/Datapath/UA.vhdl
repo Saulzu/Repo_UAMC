@@ -33,14 +33,14 @@ architecture Arq_Unidad_Aritmetica of Unidad_Aritmetica is
         );
     end component;
 
-    signal opA : STD_LOGIC_VECTOR(7 downto 0);      -- Operando A para la UA
-    signal opB : STD_LOGIC_VECTOR(7 downto 0);      -- Operando B para la UA
-    signal cero        : STD_LOGIC_VECTOR(7 downto 0) := "00000000";  -- Constante cero
-    signal uno         : STD_LOGIC_VECTOR(7 downto 0) := "00000001";  -- Constante uno
-    signal menos_uno   : STD_LOGIC_VECTOR(7 downto 0) := "11111111";
-    signal B_invertida : STD_LOGIC_VECTOR(7 downto 0);
+    signal opA : STD_LOGIC_VECTOR(7 downto 0);      -- Operando A seleccionado (salida del MUX_OP_A)
+    signal opB : STD_LOGIC_VECTOR(7 downto 0);      -- Operando B seleccionado (salida del MUX_OP_B)
+    signal cero        : STD_LOGIC_VECTOR(7 downto 0) := "00000000";  -- Constante cero para operaciones
+    signal uno         : STD_LOGIC_VECTOR(7 downto 0) := "00000001";  -- Constante uno para operaciones
+    signal menos_uno   : STD_LOGIC_VECTOR(7 downto 0) := "11111111";  -- Constante -1 (complemento a 2)
+    signal B_invertida : STD_LOGIC_VECTOR(7 downto 0);  -- Inverso lógico de B (para restas)
 
-    signal c_int : STD_LOGIC_VECTOR(8 downto 0);
+    signal c_int : STD_LOGIC_VECTOR(8 downto 0);  -- Cadena interna de acarreos (9 bits para 8 sumadores + Cin)
 
 begin
 

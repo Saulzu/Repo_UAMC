@@ -26,43 +26,72 @@ architecture Arq_Uc of UC is
 
     -- 1. Declaración de Componentes
     component PC is 
-        Port ( CLK, W : in STD_LOGIC; C : in STD_LOGIC_VECTOR(15 downto 0); Q : out STD_LOGIC_VECTOR(15 downto 0) ); 
+        Port ( 
+            CLK : in STD_LOGIC;                       -- Señal de reloj
+            W   : in STD_LOGIC;                       -- Habilitación de carga del PC
+            C   : in STD_LOGIC_VECTOR(15 downto 0);   -- Dirección a cargar
+            Q   : out STD_LOGIC_VECTOR(15 downto 0)   -- Dirección actual
+        ); 
     end component;
     
     component Ir is 
-        Port ( CLK, W : in STD_LOGIC; D : in STD_LOGIC_VECTOR(25 downto 0); Q : out STD_LOGIC_VECTOR(25 downto 0) ); 
+        Port ( 
+            CLK : in STD_LOGIC;                       -- Señal de reloj
+            W   : in STD_LOGIC;                       -- Habilitación de carga del IR
+            D   : in STD_LOGIC_VECTOR(25 downto 0);   -- Instrucción a cargar
+            Q   : out STD_LOGIC_VECTOR(25 downto 0)   -- Instrucción almacenada
+        ); 
     end component;
     
     component Sec is 
-        Port ( CLK, InA, InB : in STD_LOGIC; e0, e1, e2, e3 : out STD_LOGIC ); 
+        Port ( 
+            CLK  : in STD_LOGIC;  -- Señal de reloj
+            InA  : in STD_LOGIC;  -- Entrada de control A
+            InB  : in STD_LOGIC;  -- Entrada de control B
+            e0   : out STD_LOGIC; -- Salida estado 0
+            e1   : out STD_LOGIC; -- Salida estado 1
+            e2   : out STD_LOGIC; -- Salida estado 2
+            e3   : out STD_LOGIC  -- Salida estado 3
+        ); 
     end component;
 
     -- Componentes estructurales añadidos del diagrama
     component Sumador_16b is
-        Port ( A, B : in STD_LOGIC_VECTOR(15 downto 0); Cin : in STD_LOGIC; S : out STD_LOGIC_VECTOR(15 downto 0); Cout : out STD_LOGIC );
+        Port ( 
+            A    : in STD_LOGIC_VECTOR(15 downto 0);  -- Primer operando
+            B    : in STD_LOGIC_VECTOR(15 downto 0);  -- Segundo operando
+            Cin  : in STD_LOGIC;                      -- Acarreo de entrada
+            S    : out STD_LOGIC_VECTOR(15 downto 0); -- Suma resultado
+            Cout : out STD_LOGIC                      -- Acarreo de salida
+        ); 
     end component;
 
     component Mux_2a1_16b is
-        Port ( I0, I1 : in STD_LOGIC_VECTOR(15 downto 0); S : in STD_LOGIC; Y : out STD_LOGIC_VECTOR(15 downto 0) );
+        Port ( 
+            I0 : in STD_LOGIC_VECTOR(15 downto 0);  -- Entrada 0 (dirección secuencial)
+            I1 : in STD_LOGIC_VECTOR(15 downto 0);  -- Entrada 1 (dirección de salto)
+            S  : in STD_LOGIC;                      -- Señal de selección
+            Y  : out STD_LOGIC_VECTOR(15 downto 0)  -- Salida seleccionada
+        ); 
     end component;
 
     -- 2. Señales Internas
-    signal e0, e1, e2, e3 : STD_LOGIC;                    -- Salidas del secuenciador que determinan el paso del ciclo
-    signal pc_w_signal    : STD_LOGIC;                    -- Habilitador de carga del PC
-    signal w_ir_internal  : STD_LOGIC;                    -- Habilitador interno de escritura del IR
+    signal e0, e1, e2, e3 : STD_LOGIC;                    -- Salidas del secuenciador (4 estados diferentes de la máquina de estados)
+    signal pc_w_signal    : STD_LOGIC;                    -- Habilitador de carga del PC (cuando es '1', el PC carga el nuevo valor)
+    signal w_ir_internal  : STD_LOGIC;                    -- Habilitador interno de escritura del IR (carga la nueva instrucción)
     
     -- Señales para rutear las salidas de los registros
-    signal q_pc_internal  : STD_LOGIC_VECTOR(15 downto 0); -- Salida interna del PC
-    signal q_ir_internal  : STD_LOGIC_VECTOR(25 downto 0); -- Salida interna del IR
+    signal q_pc_internal  : STD_LOGIC_VECTOR(15 downto 0); -- Dirección actual del programa (salida del registro PC)
+    signal q_ir_internal  : STD_LOGIC_VECTOR(25 downto 0); -- Instrucción actual almacenada en el registro IR
     
-    -- Señales de los nuevos componentes
-    signal out_sumador    : STD_LOGIC_VECTOR(15 downto 0); -- Resultado de la suma PC + offset
-    signal out_mux2a1_pc  : STD_LOGIC_VECTOR(15 downto 0); -- Salida final del MUX hacia el PC
+    -- Señales de los componentes combinacionales
+    signal out_sumador    : STD_LOGIC_VECTOR(15 downto 0); -- Resultado de PC + offset (para saltos relativos)
+    signal out_mux2a1_pc  : STD_LOGIC_VECTOR(15 downto 0); -- Selección entre PC+1 (secuencial) o dirección de salto
     
-    -- Señales para el selector del MUX (Compuertas del diagrama)
-    signal selector_mux2  : STD_LOGIC;                    -- Señal de selección del MUX de salto
-    signal m0, m1, m2, m3, m4, m5, m6, m7 : STD_LOGIC;     -- Minterminos lógicos para la condición de salto
-    signal jump_condition : STD_LOGIC;                    -- Condición de salto combinada desde las banderas
+    -- Señales para la lógica de saltos (evaluador de condiciones de bandera)
+    signal selector_mux2  : STD_LOGIC;                    -- Señal que selecciona si se toma un salto condicional
+    signal m0, m1, m2, m3, m4, m5, m6, m7 : STD_LOGIC;     -- Minterminos para decodificar el tipo de salto y evaluar su condición
+    signal jump_condition : STD_LOGIC;                    -- Señal combinada: 1 si la condición del salto es verdadera
 
 begin
     -- 3. Instancia del Secuenciador

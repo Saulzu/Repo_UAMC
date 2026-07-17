@@ -19,56 +19,56 @@ architecture Arq_Unidad_Funcional of Unidad_Funcional is
 
     component ALU is
         Port (
-            A      : in  STD_LOGIC_VECTOR(7 downto 0);
-            B      : in  STD_LOGIC_VECTOR(7 downto 0);
-            S      : in  STD_LOGIC_VECTOR(3 downto 0);
-            Ci     : in  STD_LOGIC;
-            R      : out STD_LOGIC_VECTOR(7 downto 0);
-            C      : out STD_LOGIC;
-            V      : out STD_LOGIC;
-            S_flag : out STD_LOGIC;
-            Z      : out STD_LOGIC
+            A      : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando A
+            B      : in  STD_LOGIC_VECTOR(7 downto 0);  -- Operando B
+            S      : in  STD_LOGIC_VECTOR(3 downto 0);  -- Selector de operación ALU
+            Ci     : in  STD_LOGIC;                     -- Acarreo de entrada
+            R      : out STD_LOGIC_VECTOR(7 downto 0);  -- Resultado ALU
+            C      : out STD_LOGIC;                     -- Carry out
+            V      : out STD_LOGIC;                     -- Overflow
+            S_flag : out STD_LOGIC;                     -- Sign flag
+            Z      : out STD_LOGIC                      -- Zero flag
         );
     end component;
 
     component Shifterr is
         Port (
-            Q  : in  STD_LOGIC_VECTOR(7 downto 0);
-            S  : in  STD_LOGIC_VECTOR(1 downto 0);
-            D  : out STD_LOGIC_VECTOR(7 downto 0);
-            CI : out STD_LOGIC;
-            CD : out STD_LOGIC
+            Q  : in  STD_LOGIC_VECTOR(7 downto 0);  -- Entrada a desplazar
+            S  : in  STD_LOGIC_VECTOR(1 downto 0);  -- Selector de desplazamiento
+            D  : out STD_LOGIC_VECTOR(7 downto 0);  -- Resultado desplazado
+            CI : out STD_LOGIC;                     -- Carry izquierdo
+            CD : out STD_LOGIC                      -- Carry derecho
         );
     end component;
 
     component Mux_2a1 is
         Port (
-            I : in  STD_LOGIC_VECTOR(1 downto 0);
-            S : in  STD_LOGIC;
-            Y : out STD_LOGIC
+            I : in  STD_LOGIC_VECTOR(1 downto 0);  -- Dos entradas
+            S : in  STD_LOGIC;                     -- Señal de selección
+            Y : out STD_LOGIC                      -- Salida seleccionada
         );
     end component;
 
     component mux_4a1 is
         Port (
-            I : in  STD_LOGIC_VECTOR (3 downto 0);
-            S : in  STD_LOGIC_VECTOR (1 downto 0);
-            Y : out STD_LOGIC
+            I : in  STD_LOGIC_VECTOR (3 downto 0);  -- Cuatro entradas
+            S : in  STD_LOGIC_VECTOR (1 downto 0);  -- Selector de 2 bits
+            Y : out STD_LOGIC                       -- Salida
         );
     end component;
 
-    signal r_alu      : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de la ALU
-    signal r_shifter  : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado del Shifter
-    signal alu_c      : STD_LOGIC;                      -- Bandera de acarreo de la ALU
-    signal alu_v      : STD_LOGIC;                      -- Bandera de overflow de la ALU
-    signal shift_ci   : STD_LOGIC;                      -- Acarreo de entrada del shifter
-    signal shift_cd   : STD_LOGIC;                      -- Acarreo de salida del shifter
-    signal internal_R : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado interno antes de salida final
-    signal mux_c_inputs : STD_LOGIC_VECTOR(3 downto 0); -- Inputs para multiplexor de bandera C
-    signal selector_c   : STD_LOGIC_VECTOR(1 downto 0); -- Selector para multiplexor de bandera C
-    signal sel_mux_r0, sel_mux_r1, sel_mux_r2, sel_mux_r3 : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_r4, sel_mux_r5, sel_mux_r6, sel_mux_r7 : STD_LOGIC_VECTOR(1 downto 0);
-    signal sel_mux_v_flag : STD_LOGIC_VECTOR(1 downto 0);
+    signal r_alu      : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado de la ALU (operación aritmética o lógica)
+    signal r_shifter  : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado del Shifter (desplazamiento de bits)
+    signal alu_c      : STD_LOGIC;                      -- Bandera de acarreo (Carry) proveniente de la ALU
+    signal alu_v      : STD_LOGIC;                      -- Bandera de overflow proveniente de la ALU
+    signal shift_ci   : STD_LOGIC;                      -- Bit desplazado desde la izquierda del Shifter (Carry In)
+    signal shift_cd   : STD_LOGIC;                      -- Bit desplazado desde la derecha del Shifter (Carry Out)
+    signal internal_R : STD_LOGIC_VECTOR(7 downto 0);  -- Resultado seleccionado entre ALU y Shifter (antes de salida)
+    signal mux_c_inputs : STD_LOGIC_VECTOR(3 downto 0); -- Entradas del multiplexor de bandera C (2 del ALU, 2 del Shifter)
+    signal selector_c   : STD_LOGIC_VECTOR(1 downto 0); -- Señal de selección para el multiplexor de C (S(4) y S(0))
+    signal sel_mux_r0, sel_mux_r1, sel_mux_r2, sel_mux_r3 : STD_LOGIC_VECTOR(1 downto 0); -- Entradas de multiplexores para bits 0-3
+    signal sel_mux_r4, sel_mux_r5, sel_mux_r6, sel_mux_r7 : STD_LOGIC_VECTOR(1 downto 0); -- Entradas de multiplexores para bits 4-7
+    signal sel_mux_v_flag : STD_LOGIC_VECTOR(1 downto 0);  -- Entrada del multiplexor para la bandera V (0 o alu_v)
 
 begin
 

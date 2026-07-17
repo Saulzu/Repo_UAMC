@@ -3,19 +3,17 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity sumador_completo is 
     Port ( 
-        A : in STD_LOGIC; 
-        B : in STD_LOGIC; 
-        Cin : in STD_LOGIC; 
-        S : out STD_LOGIC; 
-        Cout : out STD_LOGIC 
+        A    : in STD_LOGIC;   -- Bit A del sumador
+        B    : in STD_LOGIC;   -- Bit B del sumador
+        Cin  : in STD_LOGIC;   -- Acarreo de entrada
+        S    : out STD_LOGIC;  -- Bit de suma (A XOR B XOR Cin)
+        Cout : out STD_LOGIC   -- Acarreo de salida
     );
 end sumador_completo; 
 
 architecture Arq_sumador_completo of sumador_completo is 
 begin 
-    -- Ecuación booleana para la suma
     S <= (A xor B) xor Cin;
     
-    -- Ecuación booleana para el acarreo de salida
     Cout <= (A and B) or (Cin and (A xor B));
 end Arq_sumador_completo;
