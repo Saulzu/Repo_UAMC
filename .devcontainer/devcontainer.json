@@ -1,0 +1,18 @@
+{
+  "name": "Java Swing Completo",
+  "image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
+  "features": {
+    // Agrega soporte para un escritorio virtual accesible desde el navegador
+    "ghcr.io/devcontainers/features/desktop-lite:1": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack"
+      ]
+    }
+  },
+  "forwardPorts": [6080] 
+}
